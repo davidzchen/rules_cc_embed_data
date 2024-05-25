@@ -57,7 +57,7 @@ def cc_embed_data(
       identifier: The identifier to use in generated names (defaults to name).
       **kwargs: Args to pass to the cc_library.
     """
-    generator = "//build_tools/embed_data:generate_cc_embed_data"
+    generator = "//:generate_cc_embed_data"
     generator_location = "$(location %s)" % generator
     if identifier == None:
         identifier = name

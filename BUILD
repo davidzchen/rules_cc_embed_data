@@ -26,10 +26,10 @@ cc_binary(
     name = "generate_cc_embed_data",
     srcs = ["generate_cc_embed_data_main.cc"],
     deps = [
-        "@com_google_absl//absl/flags:flag",
-        "@com_google_absl//absl/flags:parse",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/time",
+        "@abseil-cpp//absl/flags:flag",
+        "@abseil-cpp//absl/flags:parse",
+        "@abseil-cpp//absl/strings",
+        "@abseil-cpp//absl/time",
     ],
 )
 
@@ -63,7 +63,6 @@ cc_test(
     deps = [
         ":testembed1",
         ":testembed2",
-        "//iree/testing:gtest",
-        "//iree/testing:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )

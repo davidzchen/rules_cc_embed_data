@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "build_tools/embed_data/testembed1.h"
-#include "build_tools/embed_data/testembed2.h"
-#include "iree/testing/gtest.h"
+#include "testembed1.h"
+#include "testembed2.h"
+#include "gtest/gtest.h"
 
 namespace {
 
