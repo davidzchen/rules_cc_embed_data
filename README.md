@@ -5,12 +5,12 @@ file like:
 
 ```
 namespace embed_data {
-  struct FileToc {
-    const char* name;             // the file's original name
-    const char* data;             // beginning of the file
-    size_t size;                  // length of the file
-  };
-}
+struct FileToc {
+  const char* name;             // the file's original name
+  const char* data;             // beginning of the file
+  size_t size;                  // length of the file
+};
+}  // namespace embed_data
 namespace foo {
 extern const struct ::embed_data::FileToc* this_rule_name_create();
 }
