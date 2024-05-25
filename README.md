@@ -4,7 +4,7 @@ The `cc_embed_data` rule embeds `srcs` into a C++ module. It generates a header
 file like:
 
 ```
-namespace iree {
+namespace embed_data {
   struct FileToc {
     const char* name;             // the file's original name
     const char* data;             // beginning of the file
@@ -12,7 +12,7 @@ namespace iree {
   };
 }
 namespace foo {
-extern const struct ::iree::FileToc* this_rule_name_create();
+extern const struct ::embed_data::FileToc* this_rule_name_create();
 }
 ```
 
@@ -26,3 +26,10 @@ is not included in the size).
 This was imported from [`iree-org/iree`](https://github.com/iree-org/iree) at
 commit `7f4c2d27f17380bf6b1e3b2fe8619916f0d222e5` from the directory
 `build_tools/embed_data`.
+
+### Modifications
+
+* Add `MODULE.bazel` for external dependencies
+* Take dependency on googletest repository
+* Move sources in to subdirectories.
+* Change `iree` namespacing to `embed_data`

@@ -28,7 +28,7 @@ def cc_embed_data(
     """Embeds 'srcs' into a C++ module.
 
     Generates a header like:
-      namespace iree {
+      namespace embed_data {
         struct FileToc {
           const char* name;             // the file's original name
           const char* data;             // beginning of the file
@@ -36,7 +36,7 @@ def cc_embed_data(
         };
       }
       namespace foo {
-      extern const struct ::iree::FileToc* this_rule_name_create();
+      extern const struct ::embed_data::FileToc* this_rule_name_create();
       }
 
     The 'this_rule_name()' function will return an array of FileToc

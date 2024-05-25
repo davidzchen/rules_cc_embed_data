@@ -32,20 +32,22 @@ ABSL_FLAG(std::string, strip_prefix, "", "strip prefix from filenames");
 ABSL_FLAG(bool, flatten, false,
           "whether to flatten the directory structure (only include basename)");
 
-void GenerateNamespaceOpen(std::ofstream& f) {
-  const auto& ns = absl::GetFlag(FLAGS_cpp_namespace);
-  if (ns.empty()) return;
+void GenerateNamespaceOpen(std::ofstream &f) {
+  const auto &ns = absl::GetFlag(FLAGS_cpp_namespace);
+  if (ns.empty())
+    return;
 
   std::vector<std::string> ns_comps =
       absl::StrSplit(absl::GetFlag(FLAGS_cpp_namespace), absl::ByString("::"));
-  for (const auto& ns_comp : ns_comps) {
+  for (const auto &ns_comp : ns_comps) {
     f << "namespace " << ns_comp << " {\n";
   }
 }
 
-void GenerateNamespaceClose(std::ofstream& f) {
-  const auto& ns = absl::GetFlag(FLAGS_cpp_namespace);
-  if (ns.empty()) return;
+void GenerateNamespaceClose(std::ofstream &f) {
+  const auto &ns = absl::GetFlag(FLAGS_cpp_namespace);
+  if (ns.empty())
+    return;
 
   std::vector<std::string> ns_comps =
       absl::StrSplit(absl::GetFlag(FLAGS_cpp_namespace), absl::ByString("::"));
@@ -54,27 +56,27 @@ void GenerateNamespaceClose(std::ofstream& f) {
   }
 }
 
-void GenerateTocStruct(std::ofstream& f) {
-  f << "#ifndef IREE_FILE_TOC\n";
-  f << "#define IREE_FILE_TOC\n";
-  f << "namespace iree {\n";
+void GenerateTocStruct(std::ofstream &f) {
+  f << "#ifndef EMBED_DATA_FILE_TOC\n";
+  f << "#define EMBED_DATA_FILE_TOC\n";
+  f << "namespace embed_data {\n";
   f << "struct FileToc {\n";
   f << "  const char* name;             // the file's original name\n";
   f << "  const char* data;             // beginning of the file\n";
   f << "  std::size_t size;             // length of the file\n";
   f << "};\n";
-  f << "}  // namespace iree\n";
-  f << "#endif  // IREE_FILE_TOC\n";
+  f << "}  // namespace embed_data\n";
+  f << "#endif  // EMBED_DATA_FILE_TOC\n";
 }
 
-bool GenerateHeader(const std::string& header_file,
-                    const std::vector<std::string>& toc_files) {
+bool GenerateHeader(const std::string &header_file,
+                    const std::vector<std::string> &toc_files) {
   std::ofstream f(header_file, std::ios::out | std::ios::trunc);
-  f << "#pragma once\n";  // Pragma once isn't great but is the best we can do.
+  f << "#pragma once\n"; // Pragma once isn't great but is the best we can do.
   f << "#include <cstddef>\n";
   GenerateTocStruct(f);
   GenerateNamespaceOpen(f);
-  f << "extern const struct ::iree::FileToc* "
+  f << "extern const struct ::embed_data::FileToc* "
     << absl::GetFlag(FLAGS_identifier) << "_create();\n";
   f << "static inline std::size_t " << absl::GetFlag(FLAGS_identifier)
     << "_size() { \n";
@@ -85,14 +87,15 @@ bool GenerateHeader(const std::string& header_file,
   return f.good();
 }
 
-bool SlurpFile(const std::string& file_name, std::string* contents) {
+bool SlurpFile(const std::string &file_name, std::string *contents) {
   constexpr std::streamoff kMaxSize = 100000000;
   std::ifstream f(file_name, std::ios::in | std::ios::binary);
   // get length of file:
   f.seekg(0, f.end);
   std::streamoff length = f.tellg();
   f.seekg(0, f.beg);
-  if (!f.good()) return false;
+  if (!f.good())
+    return false;
 
   if (length > kMaxSize) {
     std::cerr << "File " << file_name << " is too large\n";
@@ -106,9 +109,9 @@ bool SlurpFile(const std::string& file_name, std::string* contents) {
   return f.good();
 }
 
-bool GenerateImpl(const std::string& impl_file,
-                  const std::vector<std::string>& input_files,
-                  const std::vector<std::string>& toc_files) {
+bool GenerateImpl(const std::string &impl_file,
+                  const std::vector<std::string> &input_files,
+                  const std::vector<std::string> &toc_files) {
   std::ofstream f(impl_file, std::ios::out | std::ios::trunc);
   f << "#include <cstddef>\n";
   GenerateTocStruct(f);
@@ -129,7 +132,7 @@ bool GenerateImpl(const std::string& impl_file,
     }
     f << "};\n";
   }
-  f << "static const struct ::iree::FileToc toc[] = {\n";
+  f << "static const struct ::embed_data::FileToc toc[] = {\n";
   assert(input_files.size() == toc_files.size());
   for (size_t i = 0, e = input_files.size(); i < e; ++i) {
     f << "  {\n";
@@ -140,7 +143,7 @@ bool GenerateImpl(const std::string& impl_file,
   }
   f << "  {nullptr, nullptr, 0},\n";
   f << "};\n";
-  f << "const struct ::iree::FileToc* " << absl::GetFlag(FLAGS_identifier)
+  f << "const struct ::embed_data::FileToc* " << absl::GetFlag(FLAGS_identifier)
     << "_create() {\n";
   f << "  return &toc[0];\n";
   f << "}\n";
@@ -150,9 +153,9 @@ bool GenerateImpl(const std::string& impl_file,
   return f.good();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   // Parse flags.
-  std::vector<char*> raw_positional_args = absl::ParseCommandLine(argc, argv);
+  std::vector<char *> raw_positional_args = absl::ParseCommandLine(argc, argv);
   std::vector<std::string> input_files;
   input_files.reserve(raw_positional_args.size() - 1);
   // Skip program name.
@@ -163,8 +166,8 @@ int main(int argc, char** argv) {
   // Generate TOC files by optionally removing a prefix.
   std::vector<std::string> toc_files;
   toc_files.reserve(input_files.size());
-  const std::string& strip_prefix = absl::GetFlag(FLAGS_strip_prefix);
-  for (const auto& input_file : input_files) {
+  const std::string &strip_prefix = absl::GetFlag(FLAGS_strip_prefix);
+  for (const auto &input_file : input_files) {
     std::string toc_file = input_file;
     if (!strip_prefix.empty()) {
       toc_file = std::string(absl::StripPrefix(toc_file, strip_prefix));
