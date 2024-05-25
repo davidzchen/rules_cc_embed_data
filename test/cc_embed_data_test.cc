@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "testembed1.h"
-#include "testembed2.h"
+#include "test/testembed1.h"
+#include "test/testembed2.h"
 #include "gtest/gtest.h"
 
 namespace {

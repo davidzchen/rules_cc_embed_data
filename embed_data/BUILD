@@ -14,8 +14,6 @@
 
 # Generates source files with embedded file contents.
 
-load(":build_defs.bzl", "cc_embed_data")
-
 package(
     default_visibility = ["//visibility:public"],
     features = ["layering_check"],
@@ -30,39 +28,5 @@ cc_binary(
         "@abseil-cpp//absl/flags:parse",
         "@abseil-cpp//absl/strings",
         "@abseil-cpp//absl/time",
-    ],
-)
-
-cc_embed_data(
-    name = "testembed1",
-    # do not sort
-    srcs = [
-        "file1.txt",
-        "data/file2.txt",
-    ],
-    cc_file_output = "testembed1.cc",
-    cpp_namespace = "foobar",
-    flatten = True,
-    h_file_output = "testembed1.h",
-)
-
-cc_embed_data(
-    name = "testembed2",
-    srcs = [
-        "data/file3.txt",
-    ],
-    cc_file_output = "testembed2.cc",
-    cpp_namespace = "foobar",
-    flatten = True,
-    h_file_output = "testembed2.h",
-)
-
-cc_test(
-    name = "cc_embed_data_test",
-    srcs = ["cc_embed_data_test.cc"],
-    deps = [
-        ":testembed1",
-        ":testembed2",
-        "@googletest//:gtest_main",
     ],
 )
